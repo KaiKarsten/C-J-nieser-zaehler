@@ -2,7 +2,28 @@
 <html lang="de">
 
 <head>
-</head>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
+
+  <script>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBqYKjJ7-2cW_ZU9i2v4xHA6YozREKEeVs",
+  authDomain: "cj-nieser-zaehler.firebaseapp.com",
+  databaseURL: "https://cj-nieser-zaehler-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "cj-nieser-zaehler",
+  storageBucket: "cj-nieser-zaehler.appspot.com",
+  messagingSenderId: "1013552974212",
+  appId: "1:1013552974212:web:9499691201617b01d675d1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 <body>
   <h1> hello world </h1>
@@ -20,36 +41,48 @@
   <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
   
   <script>
-    // Kai's Counter
-    let count = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
-    document.getElementById("counter").innerText = count;
+    // Kai's Counter initialisieren und synchronisieren
+    kaiRef.on('value', (snapshot) => {
+      const value = snapshot.val();
+      document.getElementById("counter").innerText = value;
+    });
 
     function increase() {
+      kaiRef.once('value', (snapshot) => {
+        let count = snapshot.val() || 0;
         count++;
-        document.getElementById("counter").innerText = count;
-        localStorage.setItem('counter', count); // Speichere in LocalStorage
+        kaiRef.set(count);
+      });
     }
 
     function decrease() {
+      kaiRef.once('value', (snapshot) => {
+        let count = snapshot.val() || 0;
         count--;
-        document.getElementById("counter").innerText = count;
-        localStorage.setItem('counter', count); // Speichere in LocalStorage
+        kaiRef.set(count);
+      });
     }
 
-    // Luca's Counter
-    let count2 = localStorage.getItem('counter2') ? parseInt(localStorage.getItem('counter2')) : 0;
-    document.getElementById("counter2").innerText = count2;
+    // Luca's Counter initialisieren und synchronisieren
+    lucaRef.on('value', (snapshot) => {
+      const value = snapshot.val();
+      document.getElementById("counter2").innerText = value;
+    });
 
     function increase2() {
+      lucaRef.once('value', (snapshot) => {
+        let count2 = snapshot.val() || 0;
         count2++;
-        document.getElementById("counter2").innerText = count2;
-        localStorage.setItem('counter2', count2); // Speichere in LocalStorage
+        lucaRef.set(count2);
+      });
     }
 
     function decrease2() {
+      lucaRef.once('value', (snapshot) => {
+        let count2 = snapshot.val() || 0;
         count2--;
-        document.getElementById("counter2").innerText = count2;
-        localStorage.setItem('counter2', count2); // Speichere in LocalStorage
+        lucaRef.set(count2);
+      });
     }
   </script>
 </body>
