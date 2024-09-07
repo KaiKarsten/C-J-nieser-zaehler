@@ -2,7 +2,7 @@
 <html lang="de">
 
 <head>
-  <!-- Firebase App und Datenbank einbinden -->
+  <!-- Firebase-Skripte einbinden -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
 
@@ -18,33 +18,20 @@
       appId: "1:1013552974212:web:9499691201617b01d675d1"
     };
 
-    // Firebase initialisieren und sicherstellen, dass das DOM geladen ist
+    // window.onload stellt sicher, dass der Code erst ausgeführt wird, wenn die gesamte Seite geladen ist
     window.onload = function() {
       firebase.initializeApp(firebaseConfig);
 
-      // Firebase Datenbank
+      // Firebase-Datenbank
       const database = firebase.database();
 
       // Referenzen zu den Zählern in der Firebase-Datenbank
       const kaiRef = database.ref('kaiCounter');
       const lucaRef = database.ref('lucaCounter');
 
-      // Kai's Counter initialisieren und synchronisieren
-      kaiRef.once('value', (snapshot) => {
-        if (snapshot.val() === null) {
-          // Falls der Zähler noch nicht existiert, setze ihn auf 0
-          console.log("Initialisiere Kai's Zähler auf 0");
-          kaiRef.set(0).then(() => {
-            console.log("Kai's Zähler auf 0 gesetzt");
-          }).catch((error) => {
-            console.error("Fehler beim Setzen von Kai's Zähler:", error);
-          });
-        }
-      });
-
+      // Kai's Counter synchronisieren
       kaiRef.on('value', (snapshot) => {
         const value = snapshot.val();
-        console.log("Kai's Zähler-Wert aus Firebase:", value);
         document.getElementById("counter").innerText = value || 0;
       });
 
@@ -52,8 +39,7 @@
         kaiRef.once('value', (snapshot) => {
           let count = snapshot.val() || 0;
           count++;
-          console.log("Kai's Zähler wird erhöht:", count);
-          kaiRef.set(count).catch((error) => console.error("Fehler beim Speichern von Kai's Zähler:", error));
+          kaiRef.set(count);
         });
       }
 
@@ -61,26 +47,13 @@
         kaiRef.once('value', (snapshot) => {
           let count = snapshot.val() || 0;
           count--;
-          console.log("Kai's Zähler wird verringert:", count);
-          kaiRef.set(count).catch((error) => console.error("Fehler beim Speichern von Kai's Zähler:", error));
+          kaiRef.set(count);
         });
       }
 
-      // Luca's Counter initialisieren und synchronisieren
-      lucaRef.once('value', (snapshot) => {
-        if (snapshot.val() === null) {
-          console.log("Initialisiere Luca's Zähler auf 0");
-          lucaRef.set(0).then(() => {
-            console.log("Luca's Zähler auf 0 gesetzt");
-          }).catch((error) => {
-            console.error("Fehler beim Setzen von Luca's Zähler:", error);
-          });
-        }
-      });
-
+      // Luca's Counter synchronisieren
       lucaRef.on('value', (snapshot) => {
         const value = snapshot.val();
-        console.log("Luca's Zähler-Wert aus Firebase:", value);
         document.getElementById("counter2").innerText = value || 0;
       });
 
@@ -88,8 +61,7 @@
         lucaRef.once('value', (snapshot) => {
           let count2 = snapshot.val() || 0;
           count2++;
-          console.log("Luca's Zähler wird erhöht:", count2);
-          lucaRef.set(count2).catch((error) => console.error("Fehler beim Speichern von Luca's Zähler:", error));
+          lucaRef.set(count2);
         });
       }
 
@@ -97,8 +69,7 @@
         lucaRef.once('value', (snapshot) => {
           let count2 = snapshot.val() || 0;
           count2--;
-          console.log("Luca's Zähler wird verringert:", count2);
-          lucaRef.set(count2).catch((error) => console.error("Fehler beim Speichern von Luca's Zähler:", error));
+          lucaRef.set(count2);
         });
       }
 
@@ -124,6 +95,6 @@
   <button onclick="increase2()"> Luca hoch  </button>
   <button onclick="decrease2()"> Luca runter </button>
 
-  <h2> Ice Matcha Latte, zu spät beim Pilatesssss </h2>
+  <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
 </body>
 </html>
