@@ -2,9 +2,9 @@
 <html lang="de">
 
 <head>
-  <!-- Firebase-Skripte einbinden -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
+  <!-- Firebase App und Datenbank v8 einbinden -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
   <script>
     // Firebase-Konfiguration
@@ -18,7 +18,7 @@
       appId: "1:1013552974212:web:9499691201617b01d675d1"
     };
 
-    // window.onload stellt sicher, dass der Code erst ausgeführt wird, wenn die gesamte Seite geladen ist
+    // Firebase initialisieren und sicherstellen, dass das DOM geladen ist
     window.onload = function() {
       firebase.initializeApp(firebaseConfig);
 
@@ -95,6 +95,6 @@
   <button onclick="increase2()"> Luca hoch  </button>
   <button onclick="decrease2()"> Luca runter </button>
 
-  <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
+  <h2> Ice Matcha Latte, zu spät beim Pilatessshs </h2>
 </body>
 </html>
