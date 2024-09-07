@@ -85,12 +85,32 @@
         newCell.textContent = prefix + " " + time;
 
         // Zeit in Firebase speichern
+        console.log("Speichere Zeit in Firebase: " + prefix + " " + time);
         const newTimeRef = timeRef.push();
         newTimeRef.set({
           prefix: prefix,
           time: time
+        }).then(() => {
+          console.log("Zeit erfolgreich in Firebase gespeichert: " + prefix + " " + time);
+        }).catch((error) => {
+          console.error("Fehler beim Speichern der Zeit in Firebase:", error);
         });
       }
+
+      // Lade die gespeicherten Zeiten aus Firebase und füge sie der Tabelle hinzu
+      timeRef.on('value', (snapshot) => {
+        const table = document.getElementById("timeTable");
+        table.innerHTML = "<tr><th>Zeitstempel</th></tr>"; // Tabelle zurücksetzen
+        const times = snapshot.val();
+        for (let key in times) {
+          const prefix = times[key].prefix;
+          const time = times[key].time;
+          
+          const newRow = table.insertRow();
+          const newCell = newRow.insertCell();
+          newCell.textContent = prefix + " " + time;
+        }
+      });
 
       // Button-Klick-Handler für J
       document.getElementById("addJTime").onclick = function() {
