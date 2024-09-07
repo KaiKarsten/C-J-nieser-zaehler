@@ -10,6 +10,10 @@
   <button onclick="increase()"> Kai hoch  </button>
   <button onclick="decrease()"> Kai runter </button>
 
+  <div id="counter2">0</div>
+  <button onclick="increase2()"> Luca hoch  </button>
+  <button onclick="decrease2()"> Luca runter </button>
+
   <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
   
 
@@ -40,6 +44,38 @@
         function decrease() {
             count--;
             document.getElementById("counter").innerText = count;
+        }
+
+
+
+// Hier Luca Counter jetzt
+
+
+
+                    // Überprüfen, ob ein gespeicherter Zählerwert vorhanden ist
+    let count2 = localStorage.getItem('counter2') ? parseInt(localStorage.getItem('counter2')) : 0;
+
+    // Zähler beim Laden der Seite anzeigen
+    document.getElementById("counter2").innerText = count2;
+
+
+
+
+
+        
+        // Anfangswert des Zählers
+        let count2 = 0;
+
+        // Funktion zum Erhöhen des Zählers
+        function increase2() {
+            count2++;
+            document.getElementById("counter").innerText = count;
+        }
+
+        // Funktion zum Erniedrigen des Zählers
+        function decrease2() {
+            count--;
+            document.getElementById("counter2").innerText = count;
         }
     </script>
 </body>
