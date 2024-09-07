@@ -7,7 +7,25 @@
 </head>
 
 <body>
-<h1>
-hello world
-</h1>
+<h1> hello world </h1>
+<div> id = "counter" </div>
+  <button onklick="increase()"> Kai hoch  </button>
+  <button onklick="increase()"> Kai runter </button>
 </body>
+
+      <script>
+        // Anfangswert des Zählers
+        let count = 0;
+
+        // Funktion zum Erhöhen des Zählers
+        function increase() {
+            count++;
+            document.getElementById("counter").innerText = count;
+        }
+
+        // Funktion zum Erniedrigen des Zählers
+        function decrease() {
+            count--;
+            document.getElementById("counter").innerText = count;
+        }
+    </script>
