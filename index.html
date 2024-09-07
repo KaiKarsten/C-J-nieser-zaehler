@@ -15,6 +15,18 @@
 
 
       <script>
+
+            // Überprüfen, ob ein gespeicherter Zählerwert vorhanden ist
+    let count = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
+
+    // Zähler beim Laden der Seite anzeigen
+    document.getElementById("counter").innerText = count;
+
+
+
+
+
+        
         // Anfangswert des Zählers
         let count = 0;
 
