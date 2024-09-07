@@ -49,14 +49,15 @@
       // Kai's Counter initialisieren und synchronisieren
       kaiRef.on('value', (snapshot) => {
         const value = snapshot.val();
-        document.getElementById("counter").innerText = value;
+        console.log("Kai's Zähler:", value); // Loggen der abgerufenen Werte
+        document.getElementById("counter").innerText = value || 0;
       });
 
       function increase() {
         kaiRef.once('value', (snapshot) => {
           let count = snapshot.val() || 0;
           count++;
-          kaiRef.set(count);
+          kaiRef.set(count).catch((error) => console.log("Fehler beim Speichern von Kai's Zähler:", error));
         });
       }
 
@@ -64,21 +65,22 @@
         kaiRef.once('value', (snapshot) => {
           let count = snapshot.val() || 0;
           count--;
-          kaiRef.set(count);
+          kaiRef.set(count).catch((error) => console.log("Fehler beim Speichern von Kai's Zähler:", error));
         });
       }
 
       // Luca's Counter initialisieren und synchronisieren
       lucaRef.on('value', (snapshot) => {
         const value = snapshot.val();
-        document.getElementById("counter2").innerText = value;
+        console.log("Luca's Zähler:", value); // Loggen der abgerufenen Werte
+        document.getElementById("counter2").innerText = value || 0;
       });
 
       function increase2() {
         lucaRef.once('value', (snapshot) => {
           let count2 = snapshot.val() || 0;
           count2++;
-          lucaRef.set(count2);
+          lucaRef.set(count2).catch((error) => console.log("Fehler beim Speichern von Luca's Zähler:", error));
         });
       }
 
@@ -86,7 +88,7 @@
         lucaRef.once('value', (snapshot) => {
           let count2 = snapshot.val() || 0;
           count2--;
-          lucaRef.set(count2);
+          lucaRef.set(count2).catch((error) => console.log("Fehler beim Speichern von Luca's Zähler:", error));
         });
       }
 
