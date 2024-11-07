@@ -1,13 +1,83 @@
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zähler App</title>
+  
   <!-- Firebase App und Datenbank v8 einbinden -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  
+  <style>
+    /* Basic CSS Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    .counter-container {
+      margin: 20px;
+      padding: 15px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      background-color: #ffffff;
+      width: 300px;
+      text-align: center;
+    }
+
+    .counter-container h2 {
+      font-size: 1.5em;
+      color: #4CAF50;
+    }
+
+    .counter-display {
+      font-size: 2em;
+      margin: 15px 0;
+      color: #333;
+    }
+
+    .button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 5px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 300px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+  </style>
 
   <script>
-    // Firebase-Konfiguration
     const firebaseConfig = {
       apiKey: "AIzaSyBqYKjJ7-2cW_ZU9i2v4xHA6YozREKEeVs",
       authDomain: "cj-nieser-zaehler.firebaseapp.com",
@@ -22,139 +92,86 @@
       firebase.initializeApp(firebaseConfig);
 
       const database = firebase.database();
-
-      // Referenzen zu den Zählern in der Firebase-Datenbank
       const kaiRef = database.ref('kaiCounter');
       const lucaRef = database.ref('lucaCounter');
-      const timeRef = database.ref('timeEntries'); // Referenz für die Zeitstempel
+      const timeRef = database.ref('timeEntries');
 
-      // Kai's Counter synchronisieren
       kaiRef.on('value', (snapshot) => {
-        const value = snapshot.val();
-        document.getElementById("counter").innerText = value || 0;
+        document.getElementById("kaiCounter").innerText = snapshot.val() || 0;
       });
 
-      function increase() {
-        kaiRef.once('value', (snapshot) => {
-          let count = snapshot.val() || 0;
-          count++;
-          kaiRef.set(count);
-        });
-      }
-
-      function decrease() {
-        kaiRef.once('value', (snapshot) => {
-          let count = snapshot.val() || 0;
-          count--;
-          kaiRef.set(count);
-        });
-      }
-
-      // Luca's Counter synchronisieren
       lucaRef.on('value', (snapshot) => {
-        const value = snapshot.val();
-        document.getElementById("counter2").innerText = value || 0;
+        document.getElementById("lucaCounter").innerText = snapshot.val() || 0;
       });
 
-      function increase2() {
-        lucaRef.once('value', (snapshot) => {
-          let count2 = snapshot.val() || 0;
-          count2++;
-          lucaRef.set(count2);
+      function updateCounter(ref, increment) {
+        ref.once('value', (snapshot) => {
+          let count = snapshot.val() || 0;
+          count += increment;
+          ref.set(count);
         });
       }
 
-      function decrease2() {
-        lucaRef.once('value', (snapshot) => {
-          let count2 = snapshot.val() || 0;
-          count2--;
-          lucaRef.set(count2);
-        });
-      }
+      document.getElementById("kaiUp").onclick = () => updateCounter(kaiRef, 1);
+      document.getElementById("kaiDown").onclick = () => updateCounter(kaiRef, -1);
+      document.getElementById("lucaUp").onclick = () => updateCounter(lucaRef, 1);
+      document.getElementById("lucaDown").onclick = () => updateCounter(lucaRef, -1);
 
-      // Funktion, um aktuelle Uhrzeit hinzuzufügen und in Firebase zu speichern
       function addTime(prefix) {
-        // Aktuelle Uhrzeit erhalten
         const now = new Date();
-        const time = now.toLocaleTimeString();
+        const timestamp = `${prefix} ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
 
-        // Neue Zeile zur Tabelle hinzufügen
-        const table = document.getElementById("timeTable");
-        const newRow = table.insertRow();
-        const newCell = newRow.insertCell();
-        newCell.textContent = prefix + " " + time;
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `<td>${timestamp}</td>`;
+        document.getElementById("timeTable").appendChild(newRow);
 
-        // Zeit in Firebase speichern
-        console.log("Speichere Zeit in Firebase: " + prefix + " " + time);
-        const newTimeRef = timeRef.push();
-        newTimeRef.set({
-          prefix: prefix,
-          time: time
-        }).then(() => {
-          console.log("Zeit erfolgreich in Firebase gespeichert: " + prefix + " " + time);
-        }).catch((error) => {
-          console.error("Fehler beim Speichern der Zeit in Firebase:", error);
-        });
+        timeRef.push().set({ prefix, time: timestamp });
       }
 
-      // Lade die gespeicherten Zeiten aus Firebase und füge sie der Tabelle hinzu
+      document.getElementById("addJTime").onclick = () => addTime("Johanna");
+      document.getElementById("addCTime").onclick = () => addTime("Clara");
+
       timeRef.on('value', (snapshot) => {
-        const table = document.getElementById("timeTable");
-        table.innerHTML = "<tr><th>Zeitstempel</th></tr>"; // Tabelle zurücksetzen
+        const timeTable = document.getElementById("timeTable");
+        timeTable.innerHTML = "<tr><th>Zeitstempel</th></tr>";
         const times = snapshot.val();
         for (let key in times) {
-          const prefix = times[key].prefix;
-          const time = times[key].time;
-          
-          const newRow = table.insertRow();
-          const newCell = newRow.insertCell();
-          newCell.textContent = prefix + " " + time;
+          const { prefix, time } = times[key];
+          const row = `<tr><td>${prefix} ${time}</td></tr>`;
+          timeTable.innerHTML += row;
         }
       });
-
-      // Button-Klick-Handler für J
-      document.getElementById("addJTime").onclick = function() {
-        addTime("J");
-      };
-
-      // Button-Klick-Handler für C
-      document.getElementById("addCTime").onclick = function() {
-        addTime("C");
-      };
-
-      // Binde die Funktionen an die globalen Klick-Handler für Kai und Luca
-      window.increase = increase;
-      window.decrease = decrease;
-      window.increase2 = increase2;
-      window.decrease2 = decrease2;
     };
   </script>
 </head>
-
 <body>
-  <h1> Hello World </h1>
+  <h1>Zähler App</h1>
 
-  <!-- Kai Counter -->
-  <div id="counter">0</div>
-  <button onclick="increase()"> Kai hoch </button>
-  <button onclick="decrease()"> Kai runter </button>
+  <!-- Clara Counter -->
+  <div class="counter-container">
+    <h2>Clara Counter</h2>
+    <div id="kaiCounter" class="counter-display">0</div>
+    <button id="kaiUp" class="button">Kai hoch</button>
+    <button id="kaiDown" class="button">Kai runter</button>
+  </div>
 
-  <!-- Luca Counter -->
-  <div id="counter2">0</div>
-  <button onclick="increase2()"> Luca hoch </button>
-  <button onclick="decrease2()"> Luca runter </button>
+  <!-- Johanna Counter -->
+  <div class="counter-container">
+    <h2>Johanna Counter</h2>
+    <div id="lucaCounter" class="counter-display">0</div>
+    <button id="lucaUp" class="button">Luca hoch</button>
+    <button id="lucaDown" class="button">Luca runter</button>
+  </div>
 
-  <!-- Tabelle zum Speichern der Zeiten -->
-  <table id="timeTable" border="1">
+  <!-- Zeitstempel Tabelle -->
+  <table id="timeTable">
     <tr>
       <th>Zeitstempel</th>
     </tr>
   </table>
 
-  <!-- Buttons zum Hinzufügen der Uhrzeiten -->
-  <button id="addJTime">J</button>
-  <button id="addCTime">C</button>
-
-  <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
+  <!-- Buttons zum Hinzufügen der Zeitstempel -->
+  <button id="addJTime" class="button">Johanna Zeit hinzufügen</button>
+  <button id="addCTime" class="button">Clara Zeit hinzufügen</button>
 </body>
 </html>
