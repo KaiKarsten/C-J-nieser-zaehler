@@ -59,6 +59,23 @@
     .button:hover {
       background-color: #45a049;
     }
+
+    .timestamp-table {
+      margin-top: 20px;
+      width: 80%;
+      border-collapse: collapse;
+    }
+
+    .timestamp-table th, .timestamp-table td {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .timestamp-table th {
+      background-color: #4CAF50;
+      color: white;
+    }
   </style>
 
   <script>
@@ -80,14 +97,33 @@
       const claraLucaRef = database.ref('claraLucaCounter');
       const johannaKaiRef = database.ref('johannaKaiCounter');
       const johannaLucaRef = database.ref('johannaLucaCounter');
+      const timestampRef = database.ref('timestamps');
+
+      // Funktion zum Hinzufügen von Zeitstempeln
+      function addTimestamp(action) {
+        const now = new Date();
+        const date = now.toLocaleDateString();
+        const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        
+        // Speichern des Zeitstempels in Firebase
+        const newTimestampRef = timestampRef.push();
+        newTimestampRef.set({ action, date, time });
+
+        // Hinzufügen des Zeitstempels zur Tabelle
+        const table = document.getElementById("timeTable");
+        const newRow = table.insertRow();
+        newRow.insertCell().innerText = action;
+        newRow.insertCell().innerText = `${date} ${time}`;
+      }
 
       // Helper function to update counters
-      function updateCounter(ref, elementId, increment) {
+      function updateCounter(ref, elementId, increment, action) {
         ref.once('value', (snapshot) => {
           let count = snapshot.val() || 0;
           count += increment;
           ref.set(count);
           document.getElementById(elementId).innerText = count;
+          addTimestamp(action);
         });
       }
 
@@ -95,32 +131,49 @@
       claraKaiRef.on('value', (snapshot) => {
         document.getElementById("claraKai").innerText = snapshot.val() || 0;
       });
-      document.getElementById("claraKaiUp").onclick = () => updateCounter(claraKaiRef, "claraKai", 1);
-      document.getElementById("claraKaiDown").onclick = () => updateCounter(claraKaiRef, "claraKai", -1);
+      document.getElementById("claraKaiUp").onclick = () => updateCounter(claraKaiRef, "claraKai", 1, "Clara Kai hoch");
+      document.getElementById("claraKaiDown").onclick = () => updateCounter(claraKaiRef, "claraKai", -1, "Clara Kai runter");
 
       // Clara - Luca
       claraLucaRef.on('value', (snapshot) => {
         document.getElementById("claraLuca").innerText = snapshot.val() || 0;
       });
-      document.getElementById("claraLucaUp").onclick = () => updateCounter(claraLucaRef, "claraLuca", 1);
-      document.getElementById("claraLucaDown").onclick = () => updateCounter(claraLucaRef, "claraLuca", -1);
+      document.getElementById("claraLucaUp").onclick = () => updateCounter(claraLucaRef, "claraLuca", 1, "Clara Luca hoch");
+      document.getElementById("claraLucaDown").onclick = () => updateCounter(claraLucaRef, "claraLuca", -1, "Clara Luca runter");
 
       // Johanna - Kai
       johannaKaiRef.on('value', (snapshot) => {
         document.getElementById("johannaKai").innerText = snapshot.val() || 0;
       });
-      document.getElementById("johannaKaiUp").onclick = () => updateCounter(johannaKaiRef, "johannaKai", 1);
-      document.getElementById("johannaKaiDown").onclick = () => updateCounter(johannaKaiRef, "johannaKai", -1);
+      document.getElementById("johannaKaiUp").onclick = () => updateCounter(johannaKaiRef, "johannaKai", 1, "Johanna Kai hoch");
+      document.getElementById("johannaKaiDown").onclick = () => updateCounter(johannaKaiRef, "johannaKai", -1, "Johanna Kai runter");
 
       // Johanna - Luca
       johannaLucaRef.on('value', (snapshot) => {
         document.getElementById("johannaLuca").innerText = snapshot.val() || 0;
       });
-      document.getElementById("johannaLucaUp").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", 1);
-      document.getElementById("johannaLucaDown").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", -1);
+      document.getElementById("johannaLucaUp").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", 1, "Johanna Luca hoch");
+      document.getElementById("johannaLucaDown").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", -1, "Johanna Luca runter");
+
+      // Lade gespeicherte Zeitstempel aus Firebase
+      timestampRef.on('value', (snapshot) => {
+        const table = document.getElementById("timeTable");
+        table.innerHTML = "<tr><th>Aktion</th><th>Datum & Uhrzeit</th></tr>";
+        const timestamps = snapshot.val();
+        for (let key in timestamps) {
+          const action = timestamps[key].action;
+          const date = timestamps[key].date;
+          const time = timestamps[key].time;
+
+          const newRow = table.insertRow();
+          newRow.insertCell().innerText = action;
+          newRow.insertCell().innerText = `${date} ${time}`;
+        }
+      });
     };
   </script>
 </head>
+
 <body>
   <h1>Zähler App</h1>
 
@@ -157,6 +210,14 @@
     <button id="johannaLucaUp" class="button">▲</button>
     <button id="johannaLucaDown" class="button">▼</button>
   </div>
+
+  <!-- Timestamp Table -->
+  <table id="timeTable" class="timestamp-table">
+    <tr>
+      <th>Aktion</th>
+      <th>Datum & Uhrzeit</th>
+    </tr>
+  </table>
 
   <!-- Footer Section -->
   <h2>Ice Matcha Latte, zu spät beim Pilates</h2>
