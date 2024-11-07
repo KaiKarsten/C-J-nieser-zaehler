@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <!-- Firebase App und Datenbank v8 einbinden -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    // Firebase-Konfiguration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBqYKjJ7-2cW_ZU9i2v4xHA6YozREKEeVs",
+      authDomain: "cj-nieser-zaehler.firebaseapp.com",
+      databaseURL: "https://cj-nieser-zaehler-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "cj-nieser-zaehler",
+      storageBucket: "cj-nieser-zaehler.appspot.com",
+      messagingSenderId: "1013552974212",
+      appId: "1:1013552974212:web:9499691201617b01d675d1"
+    };
+
+    window.onload = function() {
+      firebase.initializeApp(firebaseConfig);
+
+      const database = firebase.database();
+
+      // Referenzen zu den Zählern in der Firebase-Datenbank
+      const kaiRef = database.ref('kaiCounter');
+      const lucaRef = database.ref('lucaCounter');
+      const timeRef = database.ref('timeEntries'); // Referenz für die Zeitstempel
+
+      // Kai's Counter synchronisieren
+      kaiRef.on('value', (snapshot) => {
+        const value = snapshot.val();
+        document.getElementById("counter").innerText = value || 0;
+      });
+
+      function increase() {
+        kaiRef.once('value', (snapshot) => {
+          let count = snapshot.val() || 0;
+          count++;
+          kaiRef.set(count);
+        });
+      }
+
+      function decrease() {
+        kaiRef.once('value', (snapshot) => {
+          let count = snapshot.val() || 0;
+          count--;
+          kaiRef.set(count);
+        });
+      }
+
+      // Luca's Counter synchronisieren
+      lucaRef.on('value', (snapshot) => {
+        const value = snapshot.val();
+        document.getElementById("counter2").innerText = value || 0;
+      });
+
+      function increase2() {
+        lucaRef.once('value', (snapshot) => {
+          let count2 = snapshot.val() || 0;
+          count2++;
+          lucaRef.set(count2);
+        });
+      }
+
+      function decrease2() {
+        lucaRef.once('value', (snapshot) => {
+          let count2 = snapshot.val() || 0;
+          count2--;
+          lucaRef.set(count2);
+        });
+      }
+
+      // Funktion, um aktuelle Uhrzeit hinzuzufügen und in Firebase zu speichern
+      function addTime(prefix) {
+        // Aktuelle Uhrzeit erhalten
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+
+        // Neue Zeile zur Tabelle hinzufügen
+        const table = document.getElementById("timeTable");
+        const newRow = table.insertRow();
+        const newCell = newRow.insertCell();
+        newCell.textContent = prefix + " " + time;
+
+        // Zeit in Firebase speichern
+        console.log("Speichere Zeit in Firebase: " + prefix + " " + time);
+        const newTimeRef = timeRef.push();
+        newTimeRef.set({
+          prefix: prefix,
+          time: time
+        }).then(() => {
+          console.log("Zeit erfolgreich in Firebase gespeichert: " + prefix + " " + time);
+        }).catch((error) => {
+          console.error("Fehler beim Speichern der Zeit in Firebase:", error);
+        });
+      }
+
+      // Lade die gespeicherten Zeiten aus Firebase und füge sie der Tabelle hinzu
+      timeRef.on('value', (snapshot) => {
+        const table = document.getElementById("timeTable");
+        table.innerHTML = "<tr><th>Zeitstempel</th></tr>"; // Tabelle zurücksetzen
+        const times = snapshot.val();
+        for (let key in times) {
+          const prefix = times[key].prefix;
+          const time = times[key].time;
+          
+          const newRow = table.insertRow();
+          const newCell = newRow.insertCell();
+          newCell.textContent = prefix + " " + time;
+        }
+      });
+
+      // Button-Klick-Handler für J
+      document.getElementById("addJTime").onclick = function() {
+        addTime("J");
+      };
+
+      // Button-Klick-Handler für C
+      document.getElementById("addCTime").onclick = function() {
+        addTime("C");
+      };
+
+      // Binde die Funktionen an die globalen Klick-Handler für Kai und Luca
+      window.increase = increase;
+      window.decrease = decrease;
+      window.increase2 = increase2;
+      window.decrease2 = decrease2;
+    };
+  </script>
+</head>
+
+<body>
+  <h1> Hello World </h1>
+
+  <!-- Kai Counter -->
+  <div id="counter">0</div>
+  <button onclick="increase()"> Kai hoch </button>
+  <button onclick="decrease()"> Kai runter </button>
+
+  <!-- Luca Counter -->
+  <div id="counter2">0</div>
+  <button onclick="increase2()"> Luca hoch </button>
+  <button onclick="decrease2()"> Luca runter </button>
+
+  <!-- Tabelle zum Speichern der Zeiten -->
+  <table id="timeTable" border="1">
+    <tr>
+      <th>Zeitstempel</th>
+    </tr>
+  </table>
+
+  <!-- Buttons zum Hinzufügen der Uhrzeiten -->
+  <button id="addJTime">J</button>
+  <button id="addCTime">C</button>
+
+  <h2> Ice Matcha Latte, zu spät beim Pilates </h2>
+</body>
+</html>
