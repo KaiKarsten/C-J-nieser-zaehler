@@ -95,8 +95,10 @@
 
       const claraKaiRef = database.ref('claraKaiCounter');
       const claraLucaRef = database.ref('claraLucaCounter');
+      const claraJonasRef = database.ref('claraJonasCounter');
       const johannaKaiRef = database.ref('johannaKaiCounter');
       const johannaLucaRef = database.ref('johannaLucaCounter');
+      const johannaJonasRef = database.ref('johannaJonasCounter');
       const timestampRef = database.ref('timestamps');
 
       // Funktion zum Hinzufügen von Zeitstempeln
@@ -141,6 +143,13 @@
       document.getElementById("claraLucaUp").onclick = () => updateCounter(claraLucaRef, "claraLuca", 1, "Clara Luca hoch");
       document.getElementById("claraLucaDown").onclick = () => updateCounter(claraLucaRef, "claraLuca", -1, "Clara Luca runter");
 
+      // Clara - Jonas
+      claraJonasRef.on('value', (snapshot) => {
+        document.getElementById("claraJonas").innerText = snapshot.val() || 0;
+      });
+      document.getElementById("claraJonasUp").onclick = () => updateCounter(claraJonasRef, "claraJonas", 1, "Clara Jonas hoch");
+      document.getElementById("claraJonasDown").onclick = () => updateCounter(claraJonasRef, "claraJonas", -1, "Clara Jonas runter");
+
       // Johanna - Kai
       johannaKaiRef.on('value', (snapshot) => {
         document.getElementById("johannaKai").innerText = snapshot.val() || 0;
@@ -154,6 +163,13 @@
       });
       document.getElementById("johannaLucaUp").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", 1, "Johanna Luca hoch");
       document.getElementById("johannaLucaDown").onclick = () => updateCounter(johannaLucaRef, "johannaLuca", -1, "Johanna Luca runter");
+
+      // Johanna - Jonas
+      johannaJonasRef.on('value', (snapshot) => {
+        document.getElementById("johannaJonas").innerText = snapshot.val() || 0;
+      });
+      document.getElementById("johannaJonasUp").onclick = () => updateCounter(johannaJonasRef, "johannaJonas", 1, "Johanna Jonas hoch");
+      document.getElementById("johannaJonasDown").onclick = () => updateCounter(johannaJonasRef, "johannaJonas", -1, "Johanna Jonas runter");
 
       // Lade gespeicherte Zeitstempel aus Firebase
       timestampRef.on('value', (snapshot) => {
@@ -192,6 +208,12 @@
     <div id="claraLuca" class="counter-display">0</div>
     <button id="claraLucaUp" class="button">▲</button>
     <button id="claraLucaDown" class="button">▼</button>
+
+    <!-- Jonas Counter for Clara -->
+    <h3>Jonas</h3>
+    <div id="claraJonas" class="counter-display">0</div>
+    <button id="claraJonasUp" class="button">▲</button>
+    <button id="claraJonasDown" class="button">▼</button>
   </div>
 
   <!-- Johanna Counter Section -->
@@ -209,6 +231,12 @@
     <div id="johannaLuca" class="counter-display">0</div>
     <button id="johannaLucaUp" class="button">▲</button>
     <button id="johannaLucaDown" class="button">▼</button>
+
+    <!-- Jonas Counter for Johanna -->
+    <h3>Jonas</h3>
+    <div id="johannaJonas" class="counter-display">0</div>
+    <button id="johannaJonasUp" class="button">▲</button>
+    <button id="johannaJonasDown" class="button">▼</button>
   </div>
 
   <!-- Timestamp Table -->
